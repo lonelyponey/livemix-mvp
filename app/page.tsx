@@ -18,13 +18,11 @@ export default function Home() {
     }
     setLoading(true);
     try {
-      console.log("[frontend] about to call fetch");
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ description }),
       });
-      console.log("[frontend] fetch resolved, status =", res.status);
 
       if (!res.ok) {
         const text = await res.text();
@@ -42,7 +40,6 @@ export default function Home() {
       setError("Something went wrong while generating the playlist.");
     } finally {
       setLoading(false);
-      console.log("[frontend] finished handleClick");
     }
   };
 
