@@ -44,7 +44,7 @@ export async function POST(request) {
             {
               role: "system",
               content:
-                "You are a playlist generator. Given a description of desired music, you return a JSON object with a 'tracks' array. Each track must have 'title','content','artist', 'link', 'genre', 'artistBackground', 'mood','reason', 'comparisonsBetweenSongs','lyrics' and 'avatar' fields.The 'link' field is the spotify link of each music.Maximum 5 music. Respond with JSON ONLY, no extra text.",
+                "You are a playlist generator. Given a description of desired music, you return a JSON object with a 'tracks' array. Each track must have 'title','content','artist', 'link', 'genre', 'artistBackground', 'mood','reason', 'comparisonsBetweenSongs','lyrics' and 'avatar' fields.The 'link' field is the spotify link of each music.'lyrics' is must full lyrics from start to end.And about the 'avatar' field, I don't have the permission to access 'http://i.scdn.co/'. So you must give me the 'avatar' field with a link that it's possilbe to connect this link anywhere  .And the  Maximum 5 music. Respond with JSON ONLY, no extra text.",
             },
             {
               role: "user",
