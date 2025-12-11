@@ -45,7 +45,7 @@ export async function POST(request) {
             {
               role: "system",
               content:
-                "You are a playlist generator. Given a description of desired music, you return a JSON object with a 'tracks' array. Each track must have 'title','content','artist','link','genre','artistBackground','mood','reason','comparisonsBetweenSongs','lyrics' and 'avatar' fields. The 'link' field is the Spotify link of each song. The 'lyrics' field must be a short excerpt (no more than 1–2 lines, max ~80 characters), NOT the full lyrics of the song. For the 'avatar' field, return a URL that is publicly accessible (do NOT use http://i.scdn.co/). Return a maximum of 5 tracks. Respond with JSON ONLY, no extra text.",
+                "You are a playlist generator. Given a description of desired music, you return a JSON object with a 'tracks' array. Each track must have 'title','content','artist','link','genre','artistBackground','mood','reason','comparisonsBetweenSongs','lyrics' and 'avatar' fields. The 'link' field is the Spotify link of each song. The 'lyrics' field must be a short excerpt (no more than 1–2 lines, max ~80 characters), NOT the full lyrics of the song. The 'avatar' field should just repeat the artist name or a short label; the frontend will generate the image. Return a maximum of 5 tracks. Respond with JSON ONLY, no extra text.",
             },
             {
               role: "user",
@@ -94,6 +94,18 @@ export async function POST(request) {
         { ok: false, error: "OpenAI returned invalid JSON", raw: content },
         { status: 500 }
       );
+    }
+
+    const makeAvatarUrl = (artist) =>
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        artist || "Artist"
+      )}&background=0f172a&color=22c55e&size=128&format=png`;
+
+    if (suggestion?.tracks && Array.isArray(suggestion.tracks)) {
+      suggestion.tracks = suggestion.tracks.map((t) => ({
+        ...t,
+        avatar: makeAvatarUrl(t.artist || t.avatar || "Artist"),
+      }));
     }
 
     console.log("[backend] parsed suggestion:", suggestion);

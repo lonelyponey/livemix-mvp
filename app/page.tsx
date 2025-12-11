@@ -113,23 +113,34 @@ export default function Home() {
 /**
  * Track card with lyrics accordion
  */
-function TrackCard({ track, index }: { track: any; index: number }) {
+const TrackCard = ({ track, index }: { track: any; index: number }) => {
   const [showLyrics, setShowLyrics] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  const fallbackAvatar =
+    "https://ui-avatars.com/api/?name=Track&background=0f172a&color=22c55e&size=128&format=png";
 
   return (
     <li className="group flex flex-col md:flex-row gap-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-5 hover:border-emerald-400/80 hover:bg-slate-900 transition-colors">
       {/* Avatar + basic info */}
       <div className="flex items-start gap-3 md:w-56">
-        {track.avatar ? (
+        {!imgError && track.avatar ? (
           <img
             src={track.avatar}
             alt={track.artist || track.title}
             className="h-16 w-16 rounded-full object-cover border border-slate-700 shadow-md"
+            onError={(e) => {
+              // prevent infinite loop
+              setImgError(true);
+              (e.currentTarget as HTMLImageElement).src = fallbackAvatar;
+            }}
           />
         ) : (
-          <div className="h-16 w-16 rounded-full bg-slate-800 flex items-center justify-center text-sm text-slate-400">
-            {index + 1}
-          </div>
+          <img
+            src={fallbackAvatar}
+            alt="Fallback avatar"
+            className="h-16 w-16 rounded-full object-cover border border-slate-700 shadow-md"
+          />
         )}
         <div className="space-y-1">
           <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
@@ -227,4 +238,4 @@ function TrackCard({ track, index }: { track: any; index: number }) {
       </div>
     </li>
   );
-}
+};
