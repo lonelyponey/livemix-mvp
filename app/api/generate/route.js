@@ -40,15 +40,16 @@ export async function POST(request) {
         },
         body: JSON.stringify({
           model: "gpt-5.1",
+          response_format: { type: "json_object" }, // 🔐 force JSON
           messages: [
             {
               role: "system",
               content:
-                "You are a playlist generator. Given a description of desired music, you return a JSON object with a 'tracks' array. Each track must have 'title','content','artist', 'link', 'genre', 'artistBackground', 'mood','reason', 'comparisonsBetweenSongs','lyrics' and 'avatar' fields.The 'link' field is the spotify link of each music.'lyrics' is must full lyrics from start to end.And about the 'avatar' field, I don't have the permission to access 'http://i.scdn.co/'. So you must give me the 'avatar' field with a link that it's possilbe to connect this link anywhere  .And the  Maximum 5 music. Respond with JSON ONLY, no extra text.",
+                "You are a playlist generator. Given a description of desired music, you return a JSON object with a 'tracks' array. Each track must have 'title','content','artist','link','genre','artistBackground','mood','reason','comparisonsBetweenSongs','lyrics' and 'avatar' fields. The 'link' field is the Spotify link of each song. The 'lyrics' field must be a short excerpt (no more than 1–2 lines, max ~80 characters), NOT the full lyrics of the song. For the 'avatar' field, return a URL that is publicly accessible (do NOT use http://i.scdn.co/). Return a maximum of 5 tracks. Respond with JSON ONLY, no extra text.",
             },
             {
               role: "user",
-              content: `Generate a short playlist description for: "${description}"`,
+              content: `Generate a playlist for: "${description}"`,
             },
           ],
         }),
@@ -66,22 +67,36 @@ export async function POST(request) {
       );
     }
 
+    // raw is the full OpenAI response JSON
     const data = JSON.parse(raw);
-    let suggestion = data.choices[0].message.content;
 
-    // Convert the JSON string from OpenAI into an actual JS object:
-    try {
-      suggestion = JSON.parse(suggestion);
-    } catch (err) {
-      console.error("[backend] Failed to parse OpenAI JSON:", err);
+    // With response_format: "json_object", content is guaranteed to be valid JSON
+    let content = data.choices[0]?.message?.content;
+
+    if (!content) {
+      console.error("[backend] Missing content in OpenAI response:", data);
       return NextResponse.json(
-        { ok: false, error: "OpenAI returned invalid JSON", raw: suggestion },
+        { ok: false, error: "No content from OpenAI" },
+        { status: 500 }
+      );
+    }
+
+    let suggestion;
+    try {
+      suggestion = JSON.parse(content); // should be { tracks: [...] }
+    } catch (err) {
+      console.error(
+        "[backend] Failed to parse OpenAI JSON content:",
+        err,
+        content
+      );
+      return NextResponse.json(
+        { ok: false, error: "OpenAI returned invalid JSON", raw: content },
         { status: 500 }
       );
     }
 
     console.log("[backend] parsed suggestion:", suggestion);
-
     return NextResponse.json(suggestion, { status: 200 });
   } catch (err) {
     console.error("[backend] error while calling OpenAI:", err);
