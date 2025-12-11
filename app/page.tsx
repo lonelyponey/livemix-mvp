@@ -31,8 +31,7 @@ export default function Home() {
       }
 
       const data = await res.json();
-      const parsed = JSON.parse(data);
-      setPlaylist(parsed.tracks || []);
+      setPlaylist(data.tracks || []);
     } catch (err) {
       console.error("[frontend] fetch threw error:", err);
       setError("Something went wrong while generating the playlist.");

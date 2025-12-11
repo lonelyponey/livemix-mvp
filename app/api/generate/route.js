@@ -67,9 +67,21 @@ export async function POST(request) {
     }
 
     const data = JSON.parse(raw);
-    const suggestion = data.choices[0].message.content;
+    let suggestion = data.choices[0].message.content;
 
-    console.log("[backend] final suggestion:", suggestion);
+    // Convert the JSON string from OpenAI into an actual JS object:
+    try {
+      suggestion = JSON.parse(suggestion);
+    } catch (err) {
+      console.error("[backend] Failed to parse OpenAI JSON:", err);
+      return NextResponse.json(
+        { ok: false, error: "OpenAI returned invalid JSON", raw: suggestion },
+        { status: 500 }
+      );
+    }
+
+    console.log("[backend] parsed suggestion:", suggestion);
+
     return NextResponse.json(suggestion, { status: 200 });
   } catch (err) {
     console.error("[backend] error while calling OpenAI:", err);
