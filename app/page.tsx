@@ -42,69 +42,79 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-5xl rounded-2xl border border-slate-800 bg-slate-900/80 shadow-2xl shadow-black/40 px-6 py-6 sm:px-8 sm:py-8">
-        {/* Header */}
-        <header className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
-            LiveMix V1
-          </h1>
-          <p className="mt-2 text-sm sm:text-base text-slate-400 max-w-2xl">
-            Describe the music you want and I&apos;ll generate a Spotify-ready
-            playlist using AI — complete with context, mood, and lyrics.
-          </p>
-        </header>
+      <div className="w-full max-w-[1268px] rounded-2xl border border-slate-800 bg-slate-900/80 shadow-2xl shadow-black/40 px-6 py-6 sm:px-8 sm:py-8">
+        <div className="lg:flex gap-15">
+          <div>
+            <header className="mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+                LiveMix V1
+              </h1>
+              <p className="mt-2 text-sm sm:text-base text-slate-400 max-w-2xl">
+                Describe the music you want and I&apos;ll generate a
+                Spotify-ready playlist using AI — complete with context, mood,
+                and lyrics.
+              </p>
+            </header>
 
-        {/* Input area */}
-        <section className="space-y-3">
-          <label className="block text-sm font-medium text-slate-200">
-            Your description
-          </label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="True Love / Deep Connection"
-            rows={4}
-            className="w-full rounded-xl border border-slate-700 bg-slate-950/60 px-4 py-3 text-sm sm:text-base text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-emerald-400/70 transition"
-          />
+            {/* Input area */}
+            <section className="space-y-3">
+              <label className="block text-sm font-medium text-slate-200">
+                Your description
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="True Love / Deep Connection"
+                rows={4}
+                className="w-full rounded-xl border border-slate-700 bg-slate-950/60 px-4 py-3 text-sm sm:text-base text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-emerald-400/70 transition"
+              />
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <button
-              onClick={handleGenerate}
-              disabled={loading}
-              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 via-emerald-400 to-pink-500 px-6 py-2.5 text-sm font-semibold tracking-tight shadow-lg shadow-emerald-500/20 disabled:opacity-60 disabled:cursor-not-allowed transition hover:shadow-emerald-400/40"
-            >
-              {loading ? "Generating playlist..." : "Generate Playlist"}
-            </button>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <button
+                  onClick={handleGenerate}
+                  disabled={loading}
+                  className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 via-emerald-400 to-pink-500 px-6 py-2.5 text-sm font-semibold tracking-tight shadow-lg shadow-emerald-500/20 disabled:opacity-60 disabled:cursor-not-allowed transition hover:shadow-emerald-400/40"
+                >
+                  {loading ? "Generating playlist..." : "Generate Playlist"}
+                </button>
 
-            {error && <p className="text-sm text-rose-400 max-w-md">{error}</p>}
-          </div>
-        </section>
-
-        {/* Playlist */}
-        {playlist.length > 0 && (
-          <section className="mt-8 border-t border-slate-800 pt-6 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
-              <div>
-                <h2 className="text-lg sm:text-xl font-semibold tracking-tight">
-                  Your playlist
-                </h2>
-                <p className="text-sm text-slate-400">
-                  Click a track to open it in Spotify. Expand lyrics to see the
-                  full text.
-                </p>
+                {error && (
+                  <p className="text-sm text-rose-400 max-w-md">{error}</p>
+                )}
               </div>
-              <span className="inline-flex items-center rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
-                {playlist.length} track{playlist.length === 1 ? "" : "s"}
-              </span>
-            </div>
+            </section>
 
-            <ul className="mt-3 grid gap-4 md:gap-5">
-              {playlist.map((track: any, index) => (
-                <TrackCard key={index} track={track} index={index} />
-              ))}
-            </ul>
-          </section>
-        )}
+            {/* Playlist */}
+            {playlist.length > 0 && (
+              <section className="mt-8 border-t border-slate-800 pt-6 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+                  <div>
+                    <h2 className="text-lg sm:text-xl font-semibold tracking-tight">
+                      Your playlist
+                    </h2>
+                    <p className="text-sm text-slate-400">
+                      Click a track to open it in Spotify. Expand lyrics to see
+                      the full text.
+                    </p>
+                  </div>
+                  <span className="inline-flex items-center rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
+                    {playlist.length} track{playlist.length === 1 ? "" : "s"}
+                  </span>
+                </div>
+
+                <ul className="mt-3 grid gap-4 md:gap-5">
+                  {playlist.map((track: any, index) => (
+                    <TrackCard key={index} track={track} index={index} />
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
+          <div>
+            <ChatWidget />
+          </div>
+        </div>
+        {/* Header */}
       </div>
     </main>
   );
@@ -237,5 +247,135 @@ const TrackCard = ({ track, index }: { track: any; index: number }) => {
         )}
       </div>
     </li>
+  );
+};
+
+const ChatWidget = () => {
+  const [messages, setMessages] = useState<
+    { role: "user" | "assistant"; content: string }[]
+  >([
+    {
+      role: "assistant",
+      content:
+        "Hey! I’m your LiveMix music assistant 🎧\nAsk me anything about your playlist, mood, or new song ideas.",
+    },
+  ]);
+
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSend = async () => {
+    setError("");
+
+    const trimmed = input.trim();
+    if (!trimmed || loading) return;
+
+    const nextMessages = [
+      ...messages,
+      { role: "user" as const, content: trimmed },
+    ];
+    setMessages(nextMessages);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: nextMessages }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Chat request failed");
+      }
+
+      const reply = data.reply || "Hmm, I couldn’t generate a reply.";
+      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+    } catch (err: any) {
+      console.error("[frontend/chat] error:", err);
+      setError("Something went wrong talking to the assistant.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  return (
+    <section className="mt-8 rounded-2xl border border-slate-800 bg-slate-900/80 p-4 sm:p-5 space-y-4">
+      <div className="flex items-center justify-between gap-2">
+        <div>
+          <h2 className="text-base sm:text-lg font-semibold tracking-tight">
+            Chat with LiveMix
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400">
+            Ask follow-up questions, get song suggestions, or refine your mood.
+          </p>
+        </div>
+        <span className="inline-flex items-center rounded-full border border-slate-700 px-2.5 py-1 text-[11px] text-slate-300">
+          Beta
+        </span>
+      </div>
+
+      {/* Messages */}
+      <div className="h-64 sm:h-72 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 overflow-y-auto space-y-3 text-sm">
+        {messages.map((m, i) => (
+          <div
+            key={i}
+            className={`flex ${
+              m.role === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              className={`max-w-[80%] rounded-2xl px-3 py-2 whitespace-pre-wrap ${
+                m.role === "user"
+                  ? "bg-emerald-500 text-slate-950 rounded-br-sm"
+                  : "bg-slate-800 text-slate-100 rounded-bl-sm"
+              }`}
+            >
+              {m.content}
+            </div>
+          </div>
+        ))}
+
+        {loading && (
+          <div className="text-xs text-slate-400 italic mt-1">
+            Assistant is thinking…
+          </div>
+        )}
+      </div>
+
+      {/* Input */}
+      <div className="space-y-2">
+        <div className="grid grid-col sm:flex-row gap-2">
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            rows={2}
+            placeholder="Ask something like “Suggest 3 more songs like track #2 but more upbeat”"
+            className="flex-1 rounded-xl border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-emerald-400/70 resize-none"
+          />
+          <button
+            type="button"
+            onClick={handleSend}
+            disabled={loading || !input.trim()}
+            className="sm:self-stretch  inline-flex items-center justify-center rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 disabled:opacity-60 disabled:cursor-not-allowed hover:bg-emerald-400 transition"
+          >
+            {loading ? "Sending..." : "Send"}
+          </button>
+        </div>
+
+        {error && <p className="text-xs text-rose-400">{error}</p>}
+      </div>
+    </section>
   );
 };
