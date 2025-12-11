@@ -1,21 +1,22 @@
 "use client";
 
-// pages/index.js
 import { useState } from "react";
 
 export default function Home() {
   const [description, setDescription] = useState("");
-  const [playlist, setPlaylist] = useState([]);
+  const [playlist, setPlaylist] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleGenerate = async () => {
     setError("");
     setPlaylist([]);
+
     if (!description.trim()) {
       setError("Please describe the music you want.");
       return;
     }
+
     setLoading(true);
     try {
       const res = await fetch("/api/generate", {
@@ -30,11 +31,8 @@ export default function Home() {
       }
 
       const data = await res.json();
-      // console.log("[frontend] data from backend:", data["tracks"]);
-      console.log("[frontend] data from backend:", JSON.parse(data));
-      // setPlaylist(data.receivedDescription || []);
-
-      setPlaylist(JSON.parse(data).tracks);
+      const parsed = JSON.parse(data);
+      setPlaylist(parsed.tracks || []);
     } catch (err) {
       console.error("[frontend] fetch threw error:", err);
       setError("Something went wrong while generating the playlist.");
@@ -44,127 +42,166 @@ export default function Home() {
   };
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "2rem",
-        background: "#050816",
-        color: "#f9fafb",
-        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "800px",
-          background: "rgba(15,23,42,0.9)",
-          borderRadius: "1rem",
-          padding: "2rem",
-          boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-          border: "1px solid rgba(148,163,184,0.3)",
-        }}
-      >
-        <h1 style={{ fontSize: "1.75rem", marginBottom: "0.5rem" }}>
-          LiveMix V1
-        </h1>
-        <p style={{ marginBottom: "1.5rem", color: "#9ca3af" }}>
-          Describe the music you want, and I&apos;ll generate a Spotify-ready
-          playlist using AI.
-        </p>
+    <main className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-5xl rounded-2xl border border-slate-800 bg-slate-900/80 shadow-2xl shadow-black/40 px-6 py-6 sm:px-8 sm:py-8">
+        {/* Header */}
+        <header className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+            LiveMix V1
+          </h1>
+          <p className="mt-2 text-sm sm:text-base text-slate-400 max-w-2xl">
+            Describe the music you want and I&apos;ll generate a Spotify-ready
+            playlist using AI — complete with context, mood, and lyrics.
+          </p>
+        </header>
 
-        <label
-          style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}
-        >
-          Your description
-        </label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="True Love / Deep Connection"
-          rows={4}
-          style={{
-            width: "100%",
-            padding: "0.75rem 1rem",
-            borderRadius: "0.75rem",
-            border: "1px solid #374151",
-            background: "#020617",
-            color: "#e5e7eb",
-            resize: "vertical",
-            marginBottom: "1rem",
-          }}
-        />
-        <button
-          onClick={handleGenerate}
-          disabled={loading}
-          style={{
-            padding: "0.75rem 1.5rem",
-            borderRadius: "999px",
-            border: "none",
-            cursor: loading ? "default" : "pointer",
-            fontWeight: 600,
-            fontSize: "0.95rem",
-            background:
-              "linear-gradient(135deg, #6366f1 0%, #22c55e 50%, #ec4899 100%)",
-            opacity: loading ? 0.7 : 1,
-          }}
-        >
-          {loading ? "Generating playlist..." : "Generate Playlist"}
-        </button>
+        {/* Input area */}
+        <section className="space-y-3">
+          <label className="block text-sm font-medium text-slate-200">
+            Your description
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="True Love / Deep Connection"
+            rows={4}
+            className="w-full rounded-xl border border-slate-700 bg-slate-950/60 px-4 py-3 text-sm sm:text-base text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/70 focus:border-emerald-400/70 transition"
+          />
 
-        {error && (
-          <p style={{ color: "#f97373", marginTop: "1rem" }}>{error}</p>
-        )}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <button
+              onClick={handleGenerate}
+              disabled={loading}
+              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 via-emerald-400 to-pink-500 px-6 py-2.5 text-sm font-semibold tracking-tight shadow-lg shadow-emerald-500/20 disabled:opacity-60 disabled:cursor-not-allowed transition hover:shadow-emerald-400/40"
+            >
+              {loading ? "Generating playlist..." : "Generate Playlist"}
+            </button>
 
+            {error && <p className="text-sm text-rose-400 max-w-md">{error}</p>}
+          </div>
+        </section>
+
+        {/* Playlist */}
         {playlist.length > 0 && (
-          <div style={{ marginTop: "2rem" }}>
-            <h2 style={{ fontSize: "1.25rem", marginBottom: "0.75rem" }}>
-              Your playlist
-            </h2>
-            <p style={{ color: "#9ca3af", marginBottom: "0.75rem" }}>
-              Click a track to open it in Spotify.
-            </p>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          <section className="mt-8 border-t border-slate-800 pt-6 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+              <div>
+                <h2 className="text-lg sm:text-xl font-semibold tracking-tight">
+                  Your playlist
+                </h2>
+                <p className="text-sm text-slate-400">
+                  Click a track to open it in Spotify. Each card includes mood,
+                  background and lyrics.
+                </p>
+              </div>
+              <span className="inline-flex items-center rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
+                {playlist.length} track{playlist.length === 1 ? "" : "s"}
+              </span>
+            </div>
+
+            <ul className="mt-3 grid gap-4 md:gap-5">
               {playlist.map((track: any, index) => (
                 <li
                   key={index}
-                  style={{
-                    padding: "0.75rem 0",
-                    borderBottom: "1px solid rgba(55,65,81,0.7)",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    gap: "1rem",
-                  }}
+                  className="group flex flex-col md:flex-row gap-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-5 hover:border-emerald-400/80 hover:bg-slate-900 transition-colors"
                 >
-                  <div>
-                    <div style={{ fontWeight: 500 }}>{track.title}</div>
-                    <div style={{ fontSize: "0.85rem", color: "#9ca3af" }}>
-                      {track.artist}
+                  {/* Avatar + index */}
+                  <div className="flex items-start gap-3 md:w-56">
+                    {track.avatar ? (
+                      <img
+                        src={track.avatar}
+                        alt={track.artist || track.title}
+                        className="h-16 w-16 rounded-full object-cover border border-slate-700 shadow-md"
+                      />
+                    ) : (
+                      <div className="h-16 w-16 rounded-full bg-slate-800 flex items-center justify-center text-sm text-slate-400">
+                        {index + 1}
+                      </div>
+                    )}
+                    <div className="space-y-1">
+                      <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
+                        Track #{index + 1}
+                      </p>
+                      <h3 className="text-base sm:text-lg font-semibold leading-snug">
+                        {track.title}
+                      </h3>
+                      <p className="text-sm text-slate-400">{track.artist}</p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {track.genre && (
+                          <span className="inline-flex items-center rounded-full bg-slate-800/80 px-2.5 py-1 text-[11px] font-medium text-emerald-300">
+                            {track.genre}
+                          </span>
+                        )}
+                        {track.mood && (
+                          <span className="inline-flex items-center rounded-full bg-slate-800/80 px-2.5 py-1 text-[11px] text-slate-300">
+                            {track.mood}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  {track.link && (
-                    <a
-                      href={track.link}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{
-                        fontSize: "0.85rem",
-                        textDecoration: "none",
-                        padding: "0.35rem 0.75rem",
-                        borderRadius: "999px",
-                        border: "1px solid #22c55e",
-                      }}
-                    >
-                      Open in Spotify
-                    </a>
-                  )}
+
+                  {/* Main content */}
+                  <div className="flex-1 space-y-3 text-sm text-slate-200">
+                    {track.content && (
+                      <p className="text-slate-200">{track.content}</p>
+                    )}
+
+                    {track.reason && (
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 mb-1">
+                          Why it fits
+                        </p>
+                        <p className="text-slate-300">{track.reason}</p>
+                      </div>
+                    )}
+
+                    {track.comparisonsBetweenSongs && (
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 mb-1">
+                          Compared to other songs
+                        </p>
+                        <p className="text-slate-300">
+                          {track.comparisonsBetweenSongs}
+                        </p>
+                      </div>
+                    )}
+
+                    {track.artistBackground && (
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 mb-1">
+                          Artist background
+                        </p>
+                        <p className="text-slate-400">
+                          {track.artistBackground}
+                        </p>
+                      </div>
+                    )}
+
+                    {track.lyrics && (
+                      <div className="border-l-2 border-emerald-400/60 pl-3 text-slate-200 text-sm italic bg-slate-900/60 py-2 rounded-r-xl">
+                        “{track.lyrics}”
+                      </div>
+                    )}
+
+                    {track.link && (
+                      <div className="pt-1">
+                        <a
+                          href={track.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 rounded-full border border-emerald-400/70 px-3 py-1.5 text-xs font-medium text-emerald-200 hover:bg-emerald-400/10 transition"
+                        >
+                          Open in Spotify
+                          <span className="text-[10px]">↗</span>
+                        </a>
+                      </div>
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>
-          </div>
+          </section>
         )}
       </div>
     </main>

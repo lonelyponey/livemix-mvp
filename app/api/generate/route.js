@@ -44,7 +44,7 @@ export async function POST(request) {
             {
               role: "system",
               content:
-                "You are a playlist generator. Given a description of desired music, you return a JSON object with a 'tracks' array. Each track must have 'title','content','artist', 'link', 'genre', 'artist background', 'mood','why the song is related to topic', 'comparisons between songs' and 'recommendations for similar artists' fields.The link is the spotify link of each music.Maximum 10 tracks. Respond with JSON ONLY, no extra text.",
+                "You are a playlist generator. Given a description of desired music, you return a JSON object with a 'tracks' array. Each track must have 'title','content','artist', 'link', 'genre', 'artistBackground', 'mood','reason', 'comparisonsBetweenSongs','lyrics' and 'avatar' fields.The 'link' field is the spotify link of each music.Maximum 5 music. Respond with JSON ONLY, no extra text.",
             },
             {
               role: "user",
