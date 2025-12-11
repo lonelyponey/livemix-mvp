@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 
 export default function Home() {
   const [description, setDescription] = useState("");
@@ -341,7 +342,25 @@ const ChatWidget = () => {
                   : "bg-slate-800 text-slate-100 rounded-bl-sm"
               }`}
             >
-              {m.content}
+              <div className="prose prose-invert prose-sm max-w-none">
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => (
+                      <p className="mb-1 last:mb-0">{children}</p>
+                    ),
+                    li: ({ children }) => (
+                      <li className="mb-0.5">{children}</li>
+                    ),
+                    h3: ({ children }) => (
+                      <h3 className="text-sm font-semibold mt-2 mb-1">
+                        {children}
+                      </h3>
+                    ),
+                  }}
+                >
+                  {m.content}
+                </ReactMarkdown>
+              </div>
             </div>
           </div>
         ))}
